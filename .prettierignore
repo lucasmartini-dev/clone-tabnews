@@ -1,0 +1,5 @@
+# Prettier, starting with version 3.0.0, changed its behavior and by default uses the content within .gitignore to also ignore styling linting.
+# Link to the announcement: https://prettier.io/blog/2023/07/05/3.0.0.html#ignore-gitignored-files-by-default-14731httpsgithubcomprettierprettierpull14731-by-fiskerhttpsgithubcomfisker
+
+# Since the .next folder is already listed in .gitignore, Prettier automatically ignores it.
+# .next
