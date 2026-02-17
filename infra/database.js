@@ -7,17 +7,28 @@ async function query(queryObject) {
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
+    ssl: process.env.NODE_ENV === "development" ? false : true,
   });
-  await client.connect();
+  console.log("Credenciais do Postgres:", {
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DB,
+    password: process.env.POSTGRES_PASSWORD,
+    dot_node_env: process.env.NODE_ENV,
+    ssl: process.env.NODE_ENV === "development" ? false : true,
+  });
+
   try {
+    await client.connect();
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.log("database client has error:");
+    console.log(" --! database client has error: !--");
     console.log(error);
   } finally {
     await client.end();
-    console.log("database client has disconnected.");
+    console.log(" (: database client has disconnected :) ");
   }
 }
 
