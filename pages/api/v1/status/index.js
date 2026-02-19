@@ -10,16 +10,19 @@ async function status(request, response) {
   );
 
   const dbOpenedConnectionsResult = await database.query(
-    "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database();",
+    "SELECT current_database() as dbname, count(*) FROM pg_stat_activity WHERE datname = current_database();",
   );
   const dbOpenedConnectionsValue = parseInt(
     dbOpenedConnectionsResult.rows[0].count,
   );
 
+  const dbname = dbOpenedConnectionsResult.rows[0].dbname;
+
   response.status(200).json({
     update_at: new Date().toISOString(),
     dependencies: {
       database: {
+        name: dbname,
         version: bdVersionValue,
         max_connections: dbMaxConnectionsValue,
         opened_connections: dbOpenedConnectionsValue,
