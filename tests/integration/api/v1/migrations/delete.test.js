@@ -4,9 +4,13 @@ beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
 
-test("DELETE to /api/v1/migrations should return 405", async () => {
-  const response = await fetch("http://localhost:3000/api/v1/migrations", {
-    method: "DELETE",
+describe("DELETE /api/v1/migrations", () => {
+  describe("Anonymous user", () => {
+    test("Method not allowed for migrations", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/migrations", {
+        method: "DELETE",
+      });
+      expect(response.status).toBe(405);
+    });
   });
-  expect(response.status).toBe(405);
 });
