@@ -18,8 +18,8 @@ function StatusCompoment() {
     refreshInterval: 1999,
   });
 
-  if (!isLoading && data?.update_at) {
-    updatedAtText = new Date(data.update_at).toLocaleString("pt-BR");
+  if (!isLoading && data?.updated_at) {
+    updatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
     if (data?.dependencies?.database) {
       database = data.dependencies.database;
     }
