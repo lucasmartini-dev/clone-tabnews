@@ -19,7 +19,7 @@ async function status(request, response) {
   const dbname = dbOpenedConnectionsResult.rows[0].dbname;
 
   response.status(200).json({
-    update_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     dependencies: {
       database: {
         name: dbname,
