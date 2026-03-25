@@ -7,10 +7,10 @@ async function fetchAPI(key) {
 }
 
 export default function StatusPage() {
-  return <StatusCompoment />;
+  return <StatusComponent />;
 }
 
-function StatusCompoment() {
+function StatusComponent() {
   let updatedAtText = "Loading...";
   let database;
 
