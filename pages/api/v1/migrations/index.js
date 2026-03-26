@@ -1,34 +1,15 @@
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
-import database from "infra/database.js";
 import { createRouter } from "next-connect";
-import { InternalServerError, MethodNotAllowedError } from "infra/errors";
+import database from "infra/database.js";
+import controller from "infra/controller.js";
 
 const router = createRouter();
 
 router.get(getHandler);
 router.post(postHandler);
 
-export default router.handler({
-  onNoMatch: onNoMatchHandler,
-  onError: onErrorHandler,
-});
-
-function onNoMatchHandler(request, response) {
-  const publicErrorObject = new MethodNotAllowedError();
-  response.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
-
-function onErrorHandler(error, request, response) {
-  const publicErrorObject = new InternalServerError({
-    cause: error,
-  });
-
-  console.log(" --! Error within the catch block in the next-connect: !--");
-  console.error(publicErrorObject);
-
-  response.status(publicErrorObject.statusCode).json(publicErrorObject);
-}
+export default router.handler(controller.errorHandlers);
 
 const defaultMigrationOptions = {
   dryRun: true,
@@ -45,7 +26,7 @@ async function getHandler(request, response) {
     if (request.method === "GET") {
       const pendingMigrations = await migrationRunner({
         ...defaultMigrationOptions,
-        dbClient: dbClient,
+        dbClient,
       });
       await dbClient.end();
       return response.status(200).json(pendingMigrations);
@@ -62,7 +43,7 @@ async function postHandler(request, response) {
     if (request.method === "POST") {
       const doneMigrations = await migrationRunner({
         ...defaultMigrationOptions,
-        dbClient: dbClient,
+        dbClient,
         dryRun: false,
       });
       await dbClient.end();
