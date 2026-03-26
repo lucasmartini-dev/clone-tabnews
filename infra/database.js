@@ -10,7 +10,7 @@ async function query(queryObject) {
     console.log(" --! database client has error: !--");
     console.log(error);
   } finally {
-    await client.end();
+    await client?.end();
     console.log(" (: database client has disconnected :) ");
   }
 }
