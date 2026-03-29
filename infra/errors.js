@@ -24,7 +24,7 @@ export class ServiceError extends Error {
       cause,
     });
     this.name = "ServiceError";
-    this.action = "Check if the service is available.";
+    this.action = "Please check if the service is available.";
     this.statusCode = 503;
   }
 
@@ -84,7 +84,8 @@ export class MethodNotAllowedError extends Error {
   constructor() {
     super("This method is not allowed for this endpoint.");
     this.name = "MethodNotAllowedError";
-    this.action = "Verify if the HTTP method sent is valid for this endpoint.";
+    this.action =
+      "Please check if the HTTP method sent is valid for this endpoint.";
     this.statusCode = 405;
   }
 

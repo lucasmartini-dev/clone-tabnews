@@ -17,7 +17,8 @@ describe("DELETE /api/v1/migrations", () => {
       expect(responseBody).toEqual({
         name: "MethodNotAllowedError",
         message: "This method is not allowed for this endpoint.",
-        action: "Verify if the HTTP method sent is valid for this endpoint.",
+        action:
+          "Please check if the HTTP method sent is valid for this endpoint.",
         status_code: 405,
       });
     });
