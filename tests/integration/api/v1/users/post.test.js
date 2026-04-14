@@ -74,7 +74,8 @@ describe("POST /api/v1/users", () => {
       expect(response2Body).toEqual({
         name: "ValidationError",
         message: "The email address you provided is already in use.",
-        action: "Please use a different email address to perform this operation.",
+        action:
+          "Please use a different email address to perform this operation.",
         status_code: 400,
       });
     });

@@ -37,7 +37,10 @@ async function update(username, userInputValues) {
     await validateUniqueEmail(userInputValues.email);
   }
 
-  if ("username" in userInputValues && username.toLowerCase() !== userInputValues.username.toLowerCase()) {
+  if (
+    "username" in userInputValues &&
+    username.toLowerCase() !== userInputValues.username.toLowerCase()
+  ) {
     await validateUniqueUsername(userInputValues.username);
   }
 

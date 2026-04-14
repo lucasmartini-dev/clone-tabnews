@@ -60,15 +60,18 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       expect(response2.status).toBe(201);
 
-      const response3 = await fetch("http://localhost:3000/api/v1/users/duplicated-username-2", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response3 = await fetch(
+        "http://localhost:3000/api/v1/users/duplicated-username-2",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "duplicated-username-1",
+          }),
         },
-        body: JSON.stringify({
-          username: "duplicated-username-1",
-        }),
-      });
+      );
 
       expect(response3.status).toBe(400);
 
@@ -111,15 +114,18 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       expect(response2.status).toBe(201);
 
-      const response3 = await fetch("http://localhost:3000/api/v1/users/duplicated-email-2", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response3 = await fetch(
+        "http://localhost:3000/api/v1/users/duplicated-email-2",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: "duplicated.email.1@curso.dev",
+          }),
         },
-        body: JSON.stringify({
-          email: "duplicated.email.1@curso.dev",
-        }),
-      });
+      );
 
       expect(response3.status).toBe(400);
 
@@ -128,7 +134,8 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(response3Body).toEqual({
         name: "ValidationError",
         message: "The email address you provided is already in use.",
-        action: "Please use a different email address to perform this operation.",
+        action:
+          "Please use a different email address to perform this operation.",
         status_code: 400,
       });
     });
@@ -264,7 +271,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(response2Body).toEqual({
         id: response2Body.id,
         username: "unique-email-1",
-          email: "unique.email.2@curso.dev",
+        email: "unique.email.2@curso.dev",
         password: response2Body.password,
         created_at: response2Body.created_at,
         updated_at: response2Body.updated_at,
@@ -325,7 +332,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(response2Body.updated_at > response2Body.created_at).toBe(true);
 
       const userInDatabase = await user.findOneByUsername("new-password-1");
-      
+
       const incorrectPasswordMatch = await password.compare(
         "dontknow123456",
         userInDatabase.password,
@@ -337,6 +344,6 @@ describe("PATCH /api/v1/users/[username]", () => {
         userInDatabase.password,
       );
       expect(correctPasswordMatch).toBe(true);
-    });    
+    });
   });
 });
