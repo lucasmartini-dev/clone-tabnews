@@ -30,7 +30,7 @@ describe("POST /api/v1/users", () => {
         id: responseBody.id,
         username: "lukemartini",
         email: "luke.martini@curso.dev",
-        password: "dontknow123456",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -74,7 +74,8 @@ describe("POST /api/v1/users", () => {
       expect(response2Body).toEqual({
         name: "ValidationError",
         message: "The email address you provided is already in use.",
-        action: "Please use a different email address to register.",
+        action:
+          "Please use a different email address to perform this operation.",
         status_code: 400,
       });
     });
@@ -113,7 +114,7 @@ describe("POST /api/v1/users", () => {
       expect(response2Body).toEqual({
         name: "ValidationError",
         message: "The username you provided is already in use.",
-        action: "Please use a different username to register.",
+        action: "Please use a different username to perform this operation.",
         status_code: 400,
       });
     });
