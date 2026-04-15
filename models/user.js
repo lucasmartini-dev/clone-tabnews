@@ -108,6 +108,34 @@ async function findOneByUsername(usernameParam) {
   }
 }
 
+async function findOneByEmail(emailParam) {
+  const userFound = await runSelectQuery(emailParam);
+  return userFound;
+
+  async function runSelectQuery(emailParam) {
+    const results = await database.query({
+      text: `
+        SELECT 
+          *
+        FROM 
+          users
+        WHERE 
+          LOWER(email) = LOWER($1)
+        LIMIT 1
+        ;`,
+      values: [emailParam],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "The email submitted was not found in the system.",
+        action: "Please check if the email was typed correctly.",
+      });
+    }
+    return results.rows[0];
+  }
+}
+
 async function validateUniqueEmail(email) {
   const results = await database.query({
     text: `
@@ -125,7 +153,8 @@ async function validateUniqueEmail(email) {
   if (results.rowCount > 0) {
     throw new ValidationError({
       message: "The email address you provided is already in use.",
-      action: "Please use a different email address to perform this operation.",
+      action:
+        "Please type a different email address to perform this operation.",
     });
   }
 }
@@ -147,7 +176,7 @@ async function validateUniqueUsername(username) {
   if (results.rowCount > 0) {
     throw new ValidationError({
       message: "The username you provided is already in use.",
-      action: "Please use a different username to perform this operation.",
+      action: "Please type a different username to perform this operation.",
     });
   }
 }
@@ -160,6 +189,7 @@ async function hashPasswordInObject(userInputValues) {
 const user = {
   create,
   findOneByUsername,
+  findOneByEmail,
   update,
 };
 
