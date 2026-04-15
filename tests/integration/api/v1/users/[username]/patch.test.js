@@ -60,7 +60,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         name: "ValidationError",
         message: "The username you provided is already in use.",
-        action: "Please use a different username to perform this operation.",
+        action: "Please type a different username to perform this operation.",
         status_code: 400,
       });
     });
@@ -95,7 +95,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         name: "ValidationError",
         message: "The email address you provided is already in use.",
         action:
-          "Please use a different email address to perform this operation.",
+          "Please type a different email address to perform this operation.",
         status_code: 400,
       });
     });
