@@ -35,7 +35,7 @@ async function findOneValidByToken(token) {
         sessions
       WHERE
         token = $1
-        AND expires_at > NOW()
+        AND expires_at > timezone('utc', NOW())
       LIMIT 1
     ;`,
     values: [token],
@@ -61,13 +61,37 @@ async function renew(sessionId) {
           sessions
         SET
           expires_at = $2,
-          updated_at = NOW()
+          updated_at = timezone('utc', NOW())
         WHERE
           id = $1
         RETURNING
           *
       ;`,
       values: [sessionId, expiresAt],
+    });
+
+    return results.rows[0];
+  }
+}
+
+async function expireById(sessionId) {
+  const expiredSessionObject = await runUpdateQuery(sessionId);
+  return expiredSessionObject;
+
+  async function runUpdateQuery(sessionId) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          sessions
+        SET
+          expires_at = expires_at - interval '1 year',
+          updated_at = timezone('utc', NOW())
+        WHERE
+          id = $1
+        RETURNING
+          *
+        ;`,
+      values: [sessionId],
     });
 
     return results.rows[0];
@@ -84,6 +108,7 @@ const session = {
   create,
   findOneValidByToken,
   renew,
+  expireById,
 };
 
 export default session;
