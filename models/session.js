@@ -18,7 +18,7 @@ async function create(userId) {
           ($1, $2, $3)
         RETURNING
           *
-      ;`,
+        ;`,
       values: [token, userId, expiresAt],
     });
 
@@ -37,7 +37,7 @@ async function findOneValidByToken(token) {
         token = $1
         AND expires_at > timezone('utc', NOW())
       LIMIT 1
-    ;`,
+      ;`,
     values: [token],
   });
 
@@ -66,7 +66,7 @@ async function renew(sessionId) {
           id = $1
         RETURNING
           *
-      ;`,
+        ;`,
       values: [sessionId, expiresAt],
     });
 
