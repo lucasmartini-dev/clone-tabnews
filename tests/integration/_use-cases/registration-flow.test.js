@@ -1,4 +1,5 @@
 import activation from "models/activation";
+import user from "models/user.js";
 import orchestrator from "tests/orchestrator.js";
 import webserver from "infra/webserver.js";
 
@@ -11,6 +12,7 @@ beforeAll(async () => {
 
 describe("Use case: Registration Flow (all success paths)", () => {
   let createdUserResponseBody;
+  let activationTokenId;
 
   describe("Anonymous user", () => {
     test("Create user account", async () => {
@@ -52,7 +54,7 @@ describe("Use case: Registration Flow (all success paths)", () => {
       expect(lastEmail.subject).toBe("Activate your account on Tab AI!");
       expect(lastEmail.text).toContain("registration-flow");
 
-      const activationTokenId = orchestrator.extractUUID(lastEmail.text);
+      activationTokenId = orchestrator.extractUUID(lastEmail.text);
 
       expect(lastEmail.text).toContain(
         `${webserver.origin}/account/activate/${activationTokenId}`,
@@ -65,7 +67,23 @@ describe("Use case: Registration Flow (all success paths)", () => {
       expect(activationTokenObject.used_at).toBe(null);
     });
 
-    test("Activate account", async () => {});
+    test("Activate account", async () => {
+      const activationResponse = await fetch(
+        `${webserver.origin}/api/v1/activations/${activationTokenId}`,
+        {
+          method: "PATCH",
+        },
+      );
+
+      expect(activationResponse.status).toBe(200);
+
+      const activationResponseBody = await activationResponse.json();
+
+      expect(Date.parse(activationResponseBody.used_at)).not.toBeNaN();
+
+      const activatedUser = await user.findOneByUsername("registration-flow");
+      expect(activatedUser.features).toEqual(["create:session"]);
+    });
 
     test("Login", async () => {});
 
