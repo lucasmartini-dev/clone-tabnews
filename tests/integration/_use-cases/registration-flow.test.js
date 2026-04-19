@@ -14,7 +14,7 @@ describe("Use case: Registration Flow (all success paths)", () => {
   let createdUserResponseBody;
   let activationTokenId;
 
-  describe("Anonymous user", () => {
+  describe("With anonymous user", () => {
     test("Create user account", async () => {
       const createdUserResponse = await fetch(
         "http://localhost:3000/api/v1/users",
@@ -84,8 +84,31 @@ describe("Use case: Registration Flow (all success paths)", () => {
       const activatedUser = await user.findOneByUsername("registration-flow");
       expect(activatedUser.features).toEqual(["create:session"]);
     });
+  });
+  describe("With activated user", () => {
+    test("Login", async () => {
+      const createSessionsResponse = await fetch(
+        "http://localhost:3000/api/v1/sessions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: "registration.flow@curso.dev",
+            password: "registration-flow-password",
+          }),
+        },
+      );
 
-    test("Login", async () => {});
+      expect(createSessionsResponse.status).toBe(201);
+
+      const createSessionsResponseBody = await createSessionsResponse.json();
+
+      expect(createSessionsResponseBody.user_id).toBe(
+        createdUserResponseBody.id,
+      );
+    });
 
     test("Get user information", async () => {});
   });

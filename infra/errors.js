@@ -58,16 +58,14 @@ export class ValidationError extends Error {
   }
 }
 
-export class NotFoundError extends Error {
+export class UnauthorizedError extends Error {
   constructor({ cause, message, action }) {
-    super(message || "This resource could not be found in the system.", {
+    super(message || "Unauthenticated user.", {
       cause,
     });
-    this.name = "NotFoundError";
-    this.action =
-      action ||
-      "Please check if the submitted parameters in the query was typed correctly.";
-    this.statusCode = 404;
+    this.name = "UnauthorizedError";
+    this.action = action || "Please log in again to continue.";
+    this.statusCode = 401;
   }
 
   toJSON() {
@@ -80,14 +78,38 @@ export class NotFoundError extends Error {
   }
 }
 
-export class UnauthorizedError extends Error {
+export class ForbiddenError extends Error {
   constructor({ cause, message, action }) {
-    super(message || "Unauthenticated user.", {
+    super(message || "Access denied.", {
       cause,
     });
-    this.name = "UnauthorizedError";
-    this.action = action || "Please log in again to continue.";
-    this.statusCode = 401;
+    this.name = "ForbiddenError";
+    this.action =
+      action ||
+      "Please verify if your user has the mandatory feature before proceeding.";
+    this.statusCode = 403;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
+
+export class NotFoundError extends Error {
+  constructor({ cause, message, action }) {
+    super(message || "This resource could not be found in the system.", {
+      cause,
+    });
+    this.name = "NotFoundError";
+    this.action =
+      action ||
+      "Please check if the submitted parameters in the query was typed correctly.";
+    this.statusCode = 404;
   }
 
   toJSON() {
