@@ -120,4 +120,41 @@ describe("POST /api/v1/users", () => {
       });
     });
   });
+
+  describe("Default user", () => {
+    test("With unique and valid data", async () => {
+      const createdUser1 = await orchestrator.createUser();
+      await orchestrator.activateUserByUserId(createdUser1.id);
+      const createdUser1SessionObject = await orchestrator.createSession(
+        createdUser1.id,
+      );
+
+      const createdUser2Response = await fetch(
+        "http://localhost:3000/api/v1/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${createdUser1SessionObject.token}`,
+          },
+          body: JSON.stringify({
+            username: "created-and-logged-user-1",
+            email: "created.and.logged.user.1@curso.dev",
+            password: "dontknow123456",
+          }),
+        },
+      );
+
+      expect(createdUser2Response.status).toBe(403);
+
+      const responseBody = await createdUser2Response.json();
+
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "You do not have permission to perform this action.",
+        action: 'Please verify if your user has the "create:user" feature.',
+        status_code: 403,
+      });
+    });
+  });
 });
