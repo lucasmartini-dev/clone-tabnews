@@ -1,5 +1,7 @@
 import { createRouter } from "next-connect";
 import controller from "infra/controller.js";
+import { ForbiddenError } from "infra/errors.js";
+import authorization from "models/authorization.js";
 import user from "models/user.js";
 
 const router = createRouter();
@@ -19,6 +21,17 @@ async function getHandler(request, response) {
 async function patchHandler(request, response) {
   const usernameParam = request.query.username;
   const userInputValues = request.body;
+
+  const userTryingToPatch = request.context.user;
+  const targetUser = await user.findOneByUsername(usernameParam);
+
+  if (!authorization.can(userTryingToPatch, "update:user", targetUser)) {
+    throw new ForbiddenError({
+      message: "You do not have permission to update another user.",
+      action:
+        "Please verify if you have the necessary resource to update another user.",
+    });
+  }
 
   const updatedUser = await user.update(usernameParam, userInputValues);
   return response.status(200).json(updatedUser);

@@ -263,12 +263,12 @@ describe("PATCH /api/v1/users/[username]", () => {
         createdUser1.id,
       );
 
-      const createdUser2 = await orchestrator.createUser({
+      await orchestrator.createUser({
         email: "duplicated.email.2@curso.dev",
       });
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${createdUser2.username}`,
+        `http://localhost:3000/api/v1/users/${createdUser1.username}`,
         {
           method: "PATCH",
           headers: {
@@ -276,7 +276,7 @@ describe("PATCH /api/v1/users/[username]", () => {
             Cookie: `session_id=${createdUser1SessionObject.token}`,
           },
           body: JSON.stringify({
-            email: "duplicated.email.1@curso.dev",
+            email: "duplicated.email.2@curso.dev",
           }),
         },
       );
@@ -291,6 +291,49 @@ describe("PATCH /api/v1/users/[username]", () => {
         action:
           "Please type a different email address to perform this operation.",
         status_code: 400,
+      });
+    });
+
+    test("With `user-B` targeting `user-A`", async () => {
+      await orchestrator.createUser({
+        username: "user-A",
+      });
+
+      const createdUserB = await orchestrator.createUser({
+        username: "user-B",
+      });
+
+      const activatedUserB = await orchestrator.activateUserByUserId(
+        createdUserB.id,
+      );
+      const sessionObjectB = await orchestrator.createSession(
+        activatedUserB.id,
+      );
+
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/user-A",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${sessionObjectB.token}`,
+          },
+          body: JSON.stringify({
+            username: "user-C",
+          }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        message: "You do not have permission to update another user.",
+        action:
+          "Please verify if you have the necessary resource to update another user.",
+        name: "ForbiddenError",
+        status_code: 403,
       });
     });
 
